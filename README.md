@@ -5,6 +5,6 @@
 
 Public playground. The code is by no means production-ready.\*
 
-\*) i.e., it SHOULD work, but is not guaranteed to.
+\*) i.e., it SHOULD work, but is not guaranteed to. Watch out for the edge cases!
 
 ## :cloud: cloud-init
