@@ -1,1 +1,1 @@
-# cloud-init
+# ionos-cloud-init
