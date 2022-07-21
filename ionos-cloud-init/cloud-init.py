@@ -587,7 +587,7 @@ def math_func(type=None):
     if type:
         input_val = (
             input(
-                f"Are you sure you want to delete {type}=\"{os.environ[type]}\" "
+                f'Are you sure you want to delete {type}="{os.environ[type]}" '
                 f"from server {os.environ['SERVER']}? [y/N]: "
             )
             or "N"
