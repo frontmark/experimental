@@ -341,7 +341,7 @@ def attach_single(href, server_name, name, type, json_files, auth_headers):
 
 
 def create(server_name, json_files, api_url, auth_headers):
-    """Creates a server with all components, by calling create_single(..) and attach(..) functions.
+    """Creates a server with all components, by calling create_single()/attach().
 
     Args:
         server_name: Name of the server.
@@ -427,7 +427,7 @@ def detach_single(href, server_name, name, type, json_files, auth_headers):
 
 
 def delete(server_name, json_files, api_url, auth_headers):
-    """Deletes a server with all components, by calling detach(...) and delete_single(...) functions.
+    """Deletes a server with all components, by calling detach()/delete_single().
 
     Args:
         server_name: Name of the server.
@@ -491,7 +491,8 @@ def fwrules_create_single(name, server_name, nic_name, json_files, auth_headers)
                         + "/firewallrules"
                     )
                     print(
-                        f"+++ Creating firewallrules.{name} on nics.{nic_name} of server.{server_name}."
+                        f"+++ Creating firewallrules.{name} "
+                        f"on nics.{nic_name} of server.{server_name}."
                     )
                     requests.post(fw_href, json=rule, headers=auth_headers)
                     server_href = name_to_href(server_name, URL_SERVERS, auth_headers)
@@ -544,7 +545,8 @@ def fwrules_delete_single(api_url, server_name, nic_name, name, auth_headers):
         fw_rule = json.loads(requests.get(item["href"], headers=auth_headers).text)
         if fw_rule["properties"]["name"] == name:
             print(
-                f"--- Deleting firewallrules.{name} from nics.{nic_name} of server.{server_name}."
+                f"--- Deleting firewallrules.{name} "
+                f"from nics.{nic_name} of server.{server_name}."
             )
             requests.delete(item["href"], headers=auth_headers)
     server_href = name_to_href(server_name, api_url, auth_headers)
@@ -585,14 +587,16 @@ def math_func(type=None):
     if type:
         input_val = (
             input(
-                f"Are you sure you want to delete {type}=\"{os.environ[type]}\" from server {os.environ['SERVER']}? [y/N]: "
+                f"Are you sure you want to delete {type}=\"{os.environ[type]}\" "
+                f"from server {os.environ['SERVER']}? [y/N]: "
             )
             or "N"
         )
     else:
         input_val = (
             input(
-                f"Are you sure you want to delete the server {os.environ['SERVER']}? [y/N]: "
+                "Are you sure you want to delete the server "
+                f"{os.environ['SERVER']}? [y/N]: "
             )
             or "N"
         )
@@ -696,7 +700,8 @@ if __name__ == "__main__":
                 cnt = cnt + 1
         if cnt > 1:
             print(
-                f"You cannot create or delete more than one of {arguments} at the same time."
+                "You cannot create or delete more than one of "
+                f"{arguments} at the same time."
             )
             exit(1)
         if os.environ["SERVER"] in server_names and os.environ["ACTION"] == "create":
