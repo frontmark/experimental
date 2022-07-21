@@ -43,6 +43,7 @@ def name_to_href(name, api_url, auth_headers):
     print(f"??? {name} does not exist?")
     exit(1)
 
+
 def json_file_open(file_name):
     """Reads a single json file and returns its contents.
 
@@ -57,9 +58,17 @@ def json_file_open(file_name):
         text = json_file.read()
         json_obj = json.loads(text)
         if "LOCATION" in os.environ:
-            with open("/datacenters/" + os.environ.get("DATACENTER") + "/." + os.environ.get("LOCATION") + ".json") as config_file:
-                for k,v in json.loads(config_file.read()).items():
-                    json_obj = json.loads(json.dumps(json_obj).replace("{{ " + k + " }}", v))
+            with open(
+                "/datacenters/"
+                + os.environ.get("DATACENTER")
+                + "/."
+                + os.environ.get("LOCATION")
+                + ".json"
+            ) as config_file:
+                for k, v in json.loads(config_file.read()).items():
+                    json_obj = json.loads(
+                        json.dumps(json_obj).replace("{{ " + k + " }}", v)
+                    )
     return json_obj
 
 
@@ -100,7 +109,7 @@ def header_function(username, password, contract_nr):
             "Authorization": "Basic " + auth_base_64_de,
         }
     }
-    #print(headers)
+    # print(headers)
     return headers
 
 
@@ -175,7 +184,9 @@ def user_data(dir, file_name):
         braces = fp.readlines()
         for line in braces:
             if line.startswith("{{"):
-                includes_dir = "/datacenters/" + os.environ.get("DATACENTER") + "/includes/"
+                includes_dir = (
+                    "/datacenters/" + os.environ.get("DATACENTER") + "/includes/"
+                )
                 includes_file = line[2:].split("}}")[0].strip()
                 if not os.path.isfile(includes_dir + includes_file):
                     includes_dir = "/datacenters/includes/"
@@ -185,9 +196,9 @@ def user_data(dir, file_name):
                 temp_braces.write(line)
     temp_braces.seek(0)
     server_yaml = temp_braces.read()
-    message_bytes = server_yaml.encode('ascii')
+    message_bytes = server_yaml.encode("ascii")
     base64_bytes = base64.b64encode(message_bytes)
-    base64_message = base64_bytes.decode('ascii')
+    base64_message = base64_bytes.decode("ascii")
     return base64_message
 
 
@@ -220,10 +231,15 @@ def create_single(server_name, json_files, api_url, auth_headers):
     try:
         for item in server_deepcopy["entities"]["volumes"]["items"]:
             if item["properties"]["imagePassword"] is None:
-                item["properties"]["imagePassword"] = ''.join(random.choices(string.ascii_uppercase + string.ascii_lowercase + string.digits, k=32))
+                item["properties"]["imagePassword"] = "".join(
+                    random.choices(
+                        string.ascii_uppercase + string.ascii_lowercase + string.digits,
+                        k=32,
+                    )
+                )
     except KeyError:
         pass
-    
+
     dir = "/datacenters/" + os.environ.get("DATACENTER") + "/cloud-configs/"
     for item in server_deepcopy["entities"]["volumes"]["items"]:
         name = item["properties"]["name"]
@@ -232,7 +248,9 @@ def create_single(server_name, json_files, api_url, auth_headers):
             item["properties"]["userData"] = user_data(dir, file_name)
             # Note that `<name>` is supposed to be `<server_name>-boot`.
 
-    res = json.loads(requests.post(api_url, json=server_deepcopy, headers=auth_headers).text)
+    res = json.loads(
+        requests.post(api_url, json=server_deepcopy, headers=auth_headers).text
+    )
     href = res["href"]
     all_available([href], auth_headers)
     return href
@@ -294,7 +312,12 @@ def attach_single(href, server_name, name, type, json_files, auth_headers):
     # but do not print it, effectively prohibiting 'root' user log in.
     try:
         if json_file[type][idx]["properties"]["imagePassword"] is None:
-            json_file[type][idx]["properties"]["imagePassword"] = ''.join(random.choices(string.ascii_uppercase + string.ascii_lowercase + string.digits, k=32))
+            json_file[type][idx]["properties"]["imagePassword"] = "".join(
+                random.choices(
+                    string.ascii_uppercase + string.ascii_lowercase + string.digits,
+                    k=32,
+                )
+            )
     except KeyError:
         pass
 
@@ -304,13 +327,19 @@ def attach_single(href, server_name, name, type, json_files, auth_headers):
         json_file[type][idx]["properties"]["userData"] = user_data(dir, file_name)
     print("+++ Attaching " + type + "." + name + " to " + server_name + ".")
     component = json.loads(
-        requests.post(url_type, json={"properties": json_file[type][idx]["properties"]}, headers=auth_headers).text
+        requests.post(
+            url_type,
+            json={"properties": json_file[type][idx]["properties"]},
+            headers=auth_headers,
+        ).text
     )
 
     all_available([href], auth_headers)
-    # Make newly attached volume a boot device if name ends with "-boot":        
+    # Make newly attached volume a boot device if name ends with "-boot":
     if type == "volumes" and component["properties"]["name"].endswith("-boot"):
-        requests.patch(href, json={"bootVolume": {"id": component["id"]}}, headers=auth_headers)
+        requests.patch(
+            href, json={"bootVolume": {"id": component["id"]}}, headers=auth_headers
+        )
     all_available([href], auth_headers)
 
 
@@ -387,7 +416,10 @@ def detach_single(href, server_name, name, type, json_files, auth_headers):
     if not server_exists(server_name, URL_SERVERS, auth_headers):
         exit(1)
     json_file = json_files[server_name + ".json"]
-    components = [t["properties"]["name"] for t in json_file[type] + json_file["server"]["entities"][type]["items"]]
+    components = [
+        t["properties"]["name"]
+        for t in json_file[type] + json_file["server"]["entities"][type]["items"]
+    ]
     if name not in components:
         print(f"??? {name} not in {components}?")
         exit(1)
@@ -438,7 +470,10 @@ def fwrules_create_single(name, server_name, nic_name, json_files, auth_headers)
     )
     if not server_exists(server_name, URL_SERVERS, auth_headers):
         exit(1)
-    nics = json_files[server_name + ".json"]["nics"] + json_files[server_name + ".json"]["server"]["entities"]["nics"]["items"]
+    nics = (
+        json_files[server_name + ".json"]["nics"]
+        + json_files[server_name + ".json"]["server"]["entities"]["nics"]["items"]
+    )
     for nic in nics:
         if nic_name == nic["properties"]["name"]:
             rules = nic["firewallrules"]
@@ -446,17 +481,25 @@ def fwrules_create_single(name, server_name, nic_name, json_files, auth_headers)
             rules_set = set(rules_names)
             if len(rules_set) != len(rules):
                 print(f"Duplicate firewallrules name detected for nic.{nic_name}:")
-                print(f"!!! nic[\"firewallrules\"] = {rules_names}")
+                print(f'!!! nic["firewallrules"] = {rules_names}')
                 print("Ensure that firewallrules names are unique per NIC.")
                 exit(1)
             for rule in rules:
                 if rule["properties"]["name"] == name:
-                    nic_href = name_to_href(server_name, URL_SERVERS, auth_headers) + "/nics"
-                    fw_href = name_to_href(nic_name, nic_href, auth_headers) + "/firewallrules"
-                    print(f"+++ Creating firewallrules.{name} on nics.{nic_name} of server.{server_name}.")
+                    nic_href = (
+                        name_to_href(server_name, URL_SERVERS, auth_headers) + "/nics"
+                    )
+                    fw_href = (
+                        name_to_href(nic_name, nic_href, auth_headers)
+                        + "/firewallrules"
+                    )
+                    print(
+                        f"+++ Creating firewallrules.{name} on nics.{nic_name} of server.{server_name}."
+                    )
                     requests.post(fw_href, json=rule, headers=auth_headers)
                     server_href = name_to_href(server_name, URL_SERVERS, auth_headers)
                     all_available([server_href], auth_headers)
+
 
 def fwrules_create(server_name, json_files, auth_headers):
     """Creates all firewall rules on all NICs of a server.
@@ -466,7 +509,10 @@ def fwrules_create(server_name, json_files, auth_headers):
         json_files: Contains all server specifications.
         auth_headers:
     """
-    nics = json_files[server_name + ".json"]["nics"] + json_files[server_name + ".json"]["server"]["entities"]["nics"]["items"]
+    nics = (
+        json_files[server_name + ".json"]["nics"]
+        + json_files[server_name + ".json"]["server"]["entities"]["nics"]["items"]
+    )
     for nic in nics:
         if "firewallrules" in nic:
             for firewallrule in nic["firewallrules"]:
@@ -477,6 +523,7 @@ def fwrules_create(server_name, json_files, auth_headers):
                     json_files,
                     auth_headers,
                 )
+
 
 def fwrules_delete_single(api_url, server_name, nic_name, name, auth_headers):
     """Deletes a single firewall rule from a NIC of a server.
@@ -516,7 +563,10 @@ def fwrule_delete(api_url, server_name, json_files, auth_headers):
         json_files: Contains all server specifications.
         auth_headers:
     """
-    nics = json_files[server_name + ".json"]["nics"] + json_files[server_name + ".json"]["server"]["entities"]["nics"]["items"]
+    nics = (
+        json_files[server_name + ".json"]["nics"]
+        + json_files[server_name + ".json"]["server"]["entities"]["nics"]["items"]
+    )
     for nic in nics:
         for firewallrule in nic["firewallrules"]:
             fwrules_delete_single(
@@ -527,6 +577,7 @@ def fwrule_delete(api_url, server_name, json_files, auth_headers):
                 auth_headers,
             )
 
+
 def math_func(type=None):
     """When deleting anything, this function will ask you a math problem to solve.
 
@@ -535,15 +586,36 @@ def math_func(type=None):
     """
     input_val = None
     if type:
-        input_val = input(f"Are you sure you want to delete {type}=\"{os.environ[type]}\" from server {os.environ['SERVER']}? [y/N]: ") or "N"
+        input_val = (
+            input(
+                f"Are you sure you want to delete {type}=\"{os.environ[type]}\" from server {os.environ['SERVER']}? [y/N]: "
+            )
+            or "N"
+        )
     else:
-        input_val = input(f"Are you sure you want to delete the server {os.environ['SERVER']}? [y/N]: ") or "N"
-    if re.match('^(H|h)(elp)?$', input_val):
+        input_val = (
+            input(
+                f"Are you sure you want to delete the server {os.environ['SERVER']}? [y/N]: "
+            )
+            or "N"
+        )
+    if re.match("^(H|h)(elp)?$", input_val):
         print("There is no help.")
         print("Try again.")
         math_func(type)
-    elif re.match('^(Y|y)(es)?$', input_val):
-        string_val = ["zero", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine"]
+    elif re.match("^(Y|y)(es)?$", input_val):
+        string_val = [
+            "zero",
+            "one",
+            "two",
+            "three",
+            "four",
+            "five",
+            "six",
+            "seven",
+            "eight",
+            "nine",
+        ]
         left = random.randint(0, 9)
         right = random.randint(0, 9)
         left_str = str(left)
@@ -556,21 +628,22 @@ def math_func(type=None):
         math_problem = f"What is the result of {left_str} {operator} {right_str}? "
         result = None
         if operator == "*":
-                result = left * right
+            result = left * right
         elif operator == "-":
-                result = left - right
+            result = left - right
         elif operator == "+":
-                result = left + right
+            result = left + right
         answer = input(math_problem)
         if not answer or int(answer) != result:
             print("Wrong answer...")
             exit(1)
-    elif re.match('^(N|n)(o)?$', input_val):
+    elif re.match("^(N|n)(o)?$", input_val):
         print("Ok, see you next time...")
         exit(1)
     else:
         print(f"{input_val} is not a valid answer!")
         math_func(type)
+
 
 if __name__ == "__main__":
     auth_headers = None
@@ -652,12 +725,18 @@ if __name__ == "__main__":
                         auth_headers,
                     )
                 elif "FIREWALLRULE" in os.environ:
-                    nics = json_files[os.environ["SERVER"] + ".json"][
-                        "nics"
-                    ] + json_files[os.environ["SERVER"] + ".json"]["server"]["entities"]["nics"]["items"]
+                    nics = (
+                        json_files[os.environ["SERVER"] + ".json"]["nics"]
+                        + json_files[os.environ["SERVER"] + ".json"]["server"][
+                            "entities"
+                        ]["nics"]["items"]
+                    )
                     for nic in nics:
                         if "firewallrules" in nic:
-                            rules = [rule["properties"]["name"] for rule in nic["firewallrules"]]
+                            rules = [
+                                rule["properties"]["name"]
+                                for rule in nic["firewallrules"]
+                            ]
                             for rule in rules:
                                 matched = re.match(
                                     os.environ["FIREWALLRULE"],
@@ -711,12 +790,18 @@ if __name__ == "__main__":
                     )
                 elif "FIREWALLRULE" in os.environ:
                     math_func("FIREWALLRULE")
-                    nics = json_files[os.environ["SERVER"] + ".json"][
-                        "nics"
-                    ] + json_files[os.environ["SERVER"] + ".json"]["server"]["entities"]["nics"]["items"]
+                    nics = (
+                        json_files[os.environ["SERVER"] + ".json"]["nics"]
+                        + json_files[os.environ["SERVER"] + ".json"]["server"][
+                            "entities"
+                        ]["nics"]["items"]
+                    )
                     for nic in nics:
                         if "firewallrules" in nic:
-                            rules = [firewallrule["properties"]["name"] for firewallrule in nic["firewallrules"]]
+                            rules = [
+                                firewallrule["properties"]["name"]
+                                for firewallrule in nic["firewallrules"]
+                            ]
                             for rule in rules:
                                 matched = re.match(
                                     os.environ["FIREWALLRULE"],
