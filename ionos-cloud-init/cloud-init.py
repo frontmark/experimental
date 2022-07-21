@@ -1,5 +1,6 @@
 import base64
 import copy
+import getpass
 import glob
 import json
 import os
@@ -9,11 +10,6 @@ import string
 import sys
 import tempfile
 import time
-from getpass import getpass
-from http import server
-from inspect import getcallargs
-from pkgutil import iter_modules
-from posix import environ
 
 import requests
 
@@ -654,7 +650,7 @@ if __name__ == "__main__":
     except Exception as e:
         print(f"Unexpected {e=}, {type(e)=}")
         username = input("Username: ")
-        password = getpass()
+        password = getpass.getpass()
         contract_nr = input("Contract Number: ")
         # Function to create the base64 authentication header:
         auth_headers = header_function(username, password, contract_nr)["headers"]
