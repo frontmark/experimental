@@ -662,7 +662,7 @@ if __name__ == "__main__":
     if "DATACENTER" in os.environ:
         # Check if the requested datacenter is a directory, locally:
         if os.environ.get("DATACENTER") in os.listdir("/datacenters/"):
-            path = "/datacenters/" + os.environ.get("DATACENTER") + "/*.json"
+            path = "/datacenters/" + os.environ["DATACENTER"] + "/*.json"
             json_files = globbing(path)
             server_names = [k.removesuffix(".json") for k in json_files.keys()]
             if "ACTION" not in os.environ:
