@@ -1,20 +1,21 @@
 import base64
+import copy
+import glob
+import json
+import os
+import random
+import re
+import string
+import sys
+import tempfile
+import time
+from getpass import getpass
 from http import server
 from inspect import getcallargs
 from pkgutil import iter_modules
 from posix import environ
-import sys
+
 import requests
-import json
-import time
-import os
-import glob
-from getpass import getpass
-import re
-import string
-import random
-import tempfile
-import copy
 
 start = time.time()
 
