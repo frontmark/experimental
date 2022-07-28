@@ -168,7 +168,7 @@ What is the result of eight - four? 4
 ```
 
 Note that firewall rules can also be created/deleted based on a regex,
-e.g., run the following command to match all firewall rules:
+e.g., run the following command to match all:
 
 ```sh
 make rerun DATACENTER=foobar LOCATION=de_fra ACTION=create SERVER=foo FIREWALLRULE=".*"
