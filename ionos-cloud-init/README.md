@@ -24,8 +24,7 @@ to create the image named `frontmark/cloud-init:latest`.
 ## Create a DATACENTER
 
 **Prerequisites**: Note that an - *empty* - datacenter
-named `foobar` is expected to exist in your IONOS Cloud
-account. *Create it first!*
+named `foobar` is expected to exist. *Create it first!*
 
 Run
 
@@ -40,8 +39,8 @@ make rerun DATACENTER=foobar LOCATION=de_fra
 ```
 
 to create the datacenter named `foobar`,
-with the two servers, named `foo` and `bar`,
-while using the `.de_fra.json` config file.
+with the two servers, `foo` and `bar`,
+using the `.de_fra.json` config file.
 
 ![foobar.png](datacenters/foobar/images/foobar.png)
 
@@ -54,7 +53,7 @@ make rerun DATACENTER=foobar LOCATION=de_fra ACTION=delete
 ```
 
 to delete all contents of the datacenter named `foobar`
-- except for the "Internet Access", which is left alone.
+(except for the "Internet Access", which is left alone).
 
 Note that you will be asked to confirm the deletion
 and solve a simple math problem to delete the datacenter:
