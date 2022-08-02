@@ -8,14 +8,15 @@ To do so, the `cloud-init.py` script expects a datacenter to be defined with JSO
 
 To make configs reusable and thus reduce redundancy, the `cloud-init.py` script is able to handle JSON and YAML with variables (inspired by [Jinja's template variables](https://jinja.palletsprojects.com/en/3.1.x/templates/#variables)): The JSON files support simple string replacements, so that you can have something like "{{ source-ip }}" in your config file, which will then be replaced with different values depending on the datacenter location (e.g., `de_fra`) at run-time. The YAML files support simple file inclusions, so that something like `{{ favmd.keys }}` will tell the python script to look for a file named `favmd.keys` (in the datacenter-specific "includes" directory first, then in the global "includes" directory) and insert it's contents at run-time.
 
-## Tutorial: The `foobar` datacenter
+## Tutorial: the `foobar` datacenter
 
-**Prerequisites**: Note that an - *empty* - datacenter
-named `foobar` is expected to exist. *Create it first!*
+**Prerequisites**: Note that an - *empty* - datacenter named `foobar` is expected to exist. *Create it first!*
 
-To make things clear, the following "tutorial" will guide you through the creation and deletion of the very simple `foobar` datacenter, which consists of only two servers: The "ENTERPRISE" server `foo`, which has an SSD, used to store data, and a boot disk; and the "CUBES" server `bar`, which only has a direct attached storage (DAS), but no data drive. Both servers do have a network interface card (NIC), which is connected to the internet, but all incoming traffic will be blocked by a firewall, except for traffic coming from "{{ source-ip }}" (defined in `.de_fra.json`) to SSH port 22.
+To make things clear: the following "tutorial" will guide you through the creation and deletion of the very simple `foobar` datacenter, which consists of only two servers: the "ENTERPRISE" server `foo`, which has an SSD, used to store data, and a boot disk for the OS; and the "CUBES" server `bar`, which only has a direct attached storage (DAS), but no data drive. Both servers do have a network interface card (NIC), which is connected to the internet, but all incoming traffic will be blocked by a firewall, except for traffic coming from "{{ source-ip }}" (defined in `.de_fra.json`) to SSH port 22.
 
-The YAML files... TODO
+The YAML files (the `#cloud-configs`) will initialize both servers entirely, so that in the end the user `favmd` can log in as the sudo user `ladmin` via SSH with a key, the sudo `passwd` will be "password" (created with `mkpasswd` as described in the [Cloud config examples](https://cloudinit.readthedocs.io/en/latest/topics/examples.html)), and unattended upgrades and log rotation will have been configured (note that `foo` and `bar` have different log rotation vacuum times, but do share the exact same configuration for unattended upgrades).
+
+**Table of Contents:**
 
 - [Build the Docker image](#build-the-docker-image)
 - [Create a DATACENTER](#create-a-datacenter)
