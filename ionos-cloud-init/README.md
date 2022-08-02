@@ -17,10 +17,10 @@ The YAML files support simple file inclusions, so that something like `{{ favmd.
 - Note that an - *empty* - datacenter named `foobar` is expected to exist. *Create it first!*
 - Note that you must have [GNU Make](https://www.gnu.org/software/make/) installed in order to make use of the handy [Makefile](Makefile).
 
-To make things clear: the following "tutorial" will guide you through the creation and deletion of the very simple `foobar` datacenter, which consists of only two servers: the "ENTERPRISE" server `foo`, which has an SSD, used to store data, and a boot disk for the OS; and the "CUBES" server `bar`, which only has a direct attached storage (DAS), but no data drive.
+The following "tutorial" will guide you through the creation and deletion of the very simple `foobar` datacenter, which consists of only two servers: the "ENTERPRISE" server `foo`, which has an SSD, used to store data, and a boot disk for the OS; and the "CUBE" server `bar`, which only has a direct attached storage (DAS), but no data drive.
 Both servers do have a network interface card (NIC), which is connected to the internet, but all incoming traffic will be blocked by a firewall, except for traffic coming from "{{ source-ip }}" (to be defined in `.de_fra.json`) to SSH port 22.
 
-The YAML files (the `#cloud-configs`) will initialize both servers entirely, so that in the end the user `favmd` can log in as the sudo user `ladmin` via SSH with a key, the sudo `passwd` will be "password" (created with `mkpasswd` as described in the [Cloud config examples](https://cloudinit.readthedocs.io/en/latest/topics/examples.html)),
+The YAML files (a.k.a. the `#cloud-configs`) will initialize both servers entirely, so that in the end the user `favmd` can log in as the sudo user `ladmin` via SSH with a key, the sudo `passwd` will be "password" (created with `mkpasswd` as described in the [Cloud config examples](https://cloudinit.readthedocs.io/en/latest/topics/examples.html)),
 and unattended upgrades and log rotation will have been configured (note that `foo` and `bar` have different log rotation vacuum times, but do share the exact same configuration for unattended upgrades).
 
 **Table of Contents:**
@@ -120,7 +120,7 @@ Note however, that in order to *create* a VOLUME for an existing server,
 the volume is supposed to be in "volumes" (top-level; note also that
 formatting the drive etc. must be done separately and manually!).
 
-E.g, run
+E.g., run
 
 ```sh
 make rerun DATACENTER=foobar LOCATION=de_fra ACTION=delete SERVER=foo VOLUME=foo-ssd
@@ -149,7 +149,7 @@ Note however, that in order to *create* a NIC for an existing server,
 the nic is supposed to be in "nics" (top-level; note also that
 firewall rules must be added separately and manually!).
 
-E.g, run
+E.g., run
 
 ```sh
 make rerun DATACENTER=foobar LOCATION=de_fra ACTION=delete SERVER=foo NIC=foo-wan
