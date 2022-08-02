@@ -38,5 +38,6 @@ jobs:
           VALIDATE_PYTHON_PYLINT: false
           VALIDATE_JSCPD: false
           VALIDATE_CPP: false
+          FILTER_REGEX_EXCLUDE: (ionos-cloud-init/datacenters/foobar/cloud-configs/.*.yaml)
           DEFAULT_BRANCH: main
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

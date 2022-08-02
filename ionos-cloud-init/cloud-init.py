@@ -297,7 +297,6 @@ def attach_single(href, server_name, name, type, json_files, auth_headers):
         exit(1)
     json_file = json_files[server_name + ".json"]
     components = [t["properties"]["name"] for t in json_file[type]]
-
     if name not in components:
         print(f"??? {name} not in {components}?")
         exit(1)
@@ -308,13 +307,14 @@ def attach_single(href, server_name, name, type, json_files, auth_headers):
     # Generate random password if "imagePassword" is null in JSON config,
     # but do not print it, effectively prohibiting 'root' user log in.
     try:
-        if json_file[type][idx]["properties"]["imagePassword"] is None:
-            json_file[type][idx]["properties"]["imagePassword"] = "".join(
-                random.choices(
-                    string.ascii_uppercase + string.ascii_lowercase + string.digits,
-                    k=32,
+        if type == "volumes":
+            if json_file[type][idx]["properties"]["imagePassword"] is None:
+                json_file[type][idx]["properties"]["imagePassword"] = "".join(
+                    random.choices(
+                        string.ascii_uppercase + string.ascii_lowercase + string.digits,
+                        k=32,
+                    )
                 )
-            )
     except KeyError:
         pass
 
@@ -585,13 +585,22 @@ def math_func(type=None):
     """
     input_val = None
     if type:
-        input_val = (
-            input(
-                f'Are you sure you want to delete {type}="{os.environ[type]}" '
-                f"from server {os.environ['SERVER']}? [y/N]: "
+        if type == "DATACENTER":
+            input_val = (
+                input(
+                    "Are you sure you want to delete the datacenter "
+                    f"{os.environ['DATACENTER']}? [y/N]: "
+                )
+                or "N"
             )
-            or "N"
-        )
+        else:
+            input_val = (
+                input(
+                    f'Are you sure you want to delete {type}="{os.environ[type]}" '
+                    f"from server {os.environ['SERVER']}? [y/N]: "
+                )
+                or "N"
+            )
     else:
         input_val = (
             input(
@@ -687,6 +696,7 @@ if __name__ == "__main__":
             for server_name in server_names:
                 create(server_name, json_files, URL_SERVERS, auth_headers)
         elif os.environ["ACTION"] == "delete":
+            math_func("DATACENTER")
             for server_name in server_names:
                 delete(server_name, json_files, URL_SERVERS, auth_headers)
         else:
