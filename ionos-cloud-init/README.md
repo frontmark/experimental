@@ -10,7 +10,9 @@ To make configs reusable and thus reduce redundancy, the `cloud-init.py` script 
 
 ## Tutorial: the `foobar` datacenter
 
-**Prerequisites**: Note that an - *empty* - datacenter named `foobar` is expected to exist. *Create it first!*
+**Prerequisites**:
+- Note that an - *empty* - datacenter named `foobar` is expected to exist. *Create it first!*
+- Note that you must have [GNU Make](https://www.gnu.org/software/make/) installed in order to make use of the handy Makefile.
 
 To make things clear: the following "tutorial" will guide you through the creation and deletion of the very simple `foobar` datacenter, which consists of only two servers: the "ENTERPRISE" server `foo`, which has an SSD, used to store data, and a boot disk for the OS; and the "CUBES" server `bar`, which only has a direct attached storage (DAS), but no data drive. Both servers do have a network interface card (NIC), which is connected to the internet, but all incoming traffic will be blocked by a firewall, except for traffic coming from "{{ source-ip }}" (defined in `.de_fra.json`) to SSH port 22.
 
