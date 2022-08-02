@@ -120,7 +120,7 @@ Note however, that in order to *create* a VOLUME for an existing server,
 the volume is supposed to be in "volumes" (top-level; note also that
 formatting the drive etc. must be done separately and manually!).
 
-E.g, run
+E.g., run
 
 ```sh
 make rerun DATACENTER=foobar LOCATION=de_fra ACTION=delete SERVER=foo VOLUME=foo-ssd
@@ -149,7 +149,7 @@ Note however, that in order to *create* a NIC for an existing server,
 the nic is supposed to be in "nics" (top-level; note also that
 firewall rules must be added separately and manually!).
 
-E.g, run
+E.g., run
 
 ```sh
 make rerun DATACENTER=foobar LOCATION=de_fra ACTION=delete SERVER=foo NIC=foo-wan
