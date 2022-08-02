@@ -1,6 +1,6 @@
 # :cloud: ionos-cloud-init
 
-TODO
+TODO: Intro
 
 - [Build the Docker image](#build-the-docker-image)
 - [Create a DATACENTER](#create-a-datacenter)
