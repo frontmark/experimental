@@ -122,7 +122,7 @@ def all_available(hrefs, auth_headers):
     """
     all_available = False
     status_finished = "AVAILABLE"
-    limit = 60
+    limit = 120
     while not all_available:
         all_available = True
         if limit == 0:
