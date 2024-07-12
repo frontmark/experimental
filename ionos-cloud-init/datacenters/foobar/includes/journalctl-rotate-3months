@@ -1,4 +1,0 @@
-- content: |
-    @weekly         root    journalctl --rotate; journalctl --vacuum-time=3months
-  path: /etc/crontab
-  append: true
